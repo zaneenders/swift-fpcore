@@ -10,11 +10,8 @@ final class FPCoreParserTests: XCTestCase {
              (fabs (- (/ (+ x 4) y) (* (/ x y) z))))
             """
         do {
+            let fpc = try FPCore(fpCore)
             let tokens = try tokens(fpCore)
-            guard let fpCore = parse(tokens) else {
-                XCTFail("unable to parse")
-                return
-            }
             XCTAssertEqual(tokens.count, 54)
             let exp: Expr = .operation(
                 .fabs,
@@ -57,7 +54,7 @@ final class FPCoreParserTests: XCTestCase {
             var props = Properties()
             props.props[Symbol("name")] = .string("\"fabs fraction 1\"")
             expected.properties = props
-            XCTAssertEqual(fpCore, expected)
+            XCTAssertEqual(fpc, expected)
         } catch LexingError.couldNotConsume(let str) {
             XCTFail(str)
         }
