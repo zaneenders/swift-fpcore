@@ -55,6 +55,9 @@ final class FPCoreParserTests: XCTestCase {
             props.props[Symbol("name")] = .string("\"fabs fraction 1\"")
             expected.properties = props
             XCTAssertEqual(fpc, expected)
+            var idk = fpc.description
+            idk = idk.replacing(.whitespace, with: "")
+            XCTAssertEqual(idk, fpCore.replacing(.whitespace, with: ""))
         } catch LexingError.couldNotConsume(let str) {
             XCTFail(str)
         }
