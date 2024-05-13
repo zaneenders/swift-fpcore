@@ -5,6 +5,10 @@ import PackageDescription
 
 let package = Package(
     name: "FPCore",
+    platforms: [
+        .macOS("14.0"), .iOS("16.0"), .watchOS("9.0"), .tvOS("16.0"),
+        .visionOS("1.0"),
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
