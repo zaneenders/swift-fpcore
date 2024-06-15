@@ -15,6 +15,11 @@ let package = Package(
             name: "FPCore",
             targets: ["FPCore"])
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/apple/swift-docc-plugin",
+            from: "1.3.0")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
