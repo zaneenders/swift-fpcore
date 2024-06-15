@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "FPCore",
+    name: "fp-core",
     platforms: [
         .macOS("14.0"), .iOS("16.0"), .watchOS("9.0"), .tvOS("16.0"),
         .visionOS("1.0"),
