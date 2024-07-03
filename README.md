@@ -17,3 +17,5 @@ of swift's features
         - MPFR
     - Declarative and safe concurrency (Sendable types)
     - upcoming non-copyable (move only) types for better systems performance
+
+## [Documentation](https://zaneenders.github.io/swift-fpcore/documentation/fpcore/)
