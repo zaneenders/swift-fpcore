@@ -31,7 +31,7 @@ jobs:
         --output-path ./gh-pages/docs \
         --disable-indexing \
         --transform-for-static-hosting \
-        --hosting-base-path fp-core \
+        --hosting-base-path swift-fpcore \
         --include-extended-types
  
     - name: Commit and push generated documentation

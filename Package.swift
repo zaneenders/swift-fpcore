@@ -1,32 +1,52 @@
 // swift-tools-version: 5.10
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "fp-core",
+    name: "swift-fpcore",
     platforms: [
         .macOS("14.0"), .iOS("16.0"), .watchOS("9.0"), .tvOS("16.0"),
         .visionOS("1.0"),
     ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "FPCore",
             targets: ["FPCore"])
     ],
     dependencies: [
+        /*
+        Below are Package dependencies but not for output. Comment out if not
+        needed for faster build times.
+        */
+        .package(
+            url: "https://github.com/apple/swift-format.git",
+            from: "510.1.0"),
+        // View documentation locally with the following command
+        // swift package --disable-sandbox preview-documentation --target FPCore
         .package(
             url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.3.0")
+            from: "1.3.0"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "FPCore"),
         .testTarget(
             name: "FPCoreTests",
             dependencies: ["FPCore"]),
+        .plugin(
+            name: "SwiftFormatPlugin",
+            capability: .command(
+                intent: .custom(
+                    verb: "format",
+                    description: "format .scribe Swift Packages"),
+                permissions: [
+                    .writeToPackageDirectory(
+                        reason: "This command reformats swift source files")
+                ]
+            ),
+            dependencies: [
+                .product(name: "swift-format", package: "swift-format")
+            ]
+        ),
     ]
 )
