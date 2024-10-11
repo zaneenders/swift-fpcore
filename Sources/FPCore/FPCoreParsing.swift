@@ -1,8 +1,23 @@
-public func parse(_ tokens: [Token]) -> FPCore? {
-    return parseFPCore(0, tokens)
+public func parse(_ tokens: [Token]) -> [FPCore] {
+    var consumed = 0
+    var cores: [FPCore] = []
+    var failed = false
+    while consumed < tokens.count {
+        if let (c, i) = parseFPCore(0, Array(tokens[consumed..<tokens.count])) {
+            consumed += i
+            cores.append(c)
+        } else {
+            if failed {
+                return cores
+            } else {
+                failed = true
+            }
+        }
+    }
+    return cores
 }
 
-private func parseFPCore(_ index: Int, _ tokens: [Token]) -> FPCore? {
+private func parseFPCore(_ index: Int, _ tokens: [Token]) -> (FPCore, Int)? {
     var i = consumeWhiteSpace(index, tokens)
     guard peekLeftParen(i, tokens) && peekFPCore(i + 1, tokens) else {
         return nil
@@ -24,7 +39,7 @@ private func parseFPCore(_ index: Int, _ tokens: [Token]) -> FPCore? {
     var fp = FPCore(expr)
     fp.arguments = args
     fp.properties = props
-    return fp
+    return (fp, i)
 }
 
 private func consumeExpr(_ index: Int, _ tokens: [Token]) -> (Int, Expr)? {
@@ -60,7 +75,9 @@ private func consumeExpr(_ index: Int, _ tokens: [Token]) -> (Int, Expr)? {
     }
 }
 
-private func consumeOperation(_ index: Int, _ tokens: [Token]) -> (
+private func consumeOperation(
+    _ index: Int, _ tokens: [Token]
+) -> (
     Int, Operation
 )? {
     switch tokens[index].type {
@@ -84,7 +101,9 @@ private func consumeOperation(_ index: Int, _ tokens: [Token]) -> (
     }
 }
 
-private func consumeProperties(_ index: Int, _ tokens: [Token]) -> (
+private func consumeProperties(
+    _ index: Int, _ tokens: [Token]
+) -> (
     Int, Properties
 ) {
     var i = consumeWhiteSpace(index, tokens)
@@ -96,7 +115,9 @@ private func consumeProperties(_ index: Int, _ tokens: [Token]) -> (
     return (i, props)
 }
 
-private func consumeProp(_ index: Int, _ tokens: [Token]) -> (
+private func consumeProp(
+    _ index: Int, _ tokens: [Token]
+) -> (
     Int, Symbol, Data
 )? {
     var i = consumeWhiteSpace(index, tokens)
@@ -113,7 +134,9 @@ private func consumeProp(_ index: Int, _ tokens: [Token]) -> (
     return (c, sym, data)
 }
 
-private func consumeArguments(_ index: Int, _ tokens: [Token])
+private func consumeArguments(
+    _ index: Int, _ tokens: [Token]
+)
     -> (Int, [Argument])?
 {
     var i = consumeWhiteSpace(index, tokens)
@@ -203,6 +226,8 @@ private func consumeWhiteSpace(_ index: Int, _ tokens: [Token]) -> Int {
     while consumeWhiteSpace {
         switch tokens[i].type {
         case .whiteSpace(_):
+            i += 1
+        case .comment(let c):
             i += 1
         default:
             consumeWhiteSpace = false

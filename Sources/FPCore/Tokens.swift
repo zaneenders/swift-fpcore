@@ -1,3 +1,5 @@
+import RegexBuilder
+
 public struct Token {
 
     public let offest: Int
@@ -9,6 +11,7 @@ public struct Token {
     }
 
     public enum FPCoreToken {
+        case comment(String)
         case leftParen
         case fpcore
         case symbol(String)
@@ -26,6 +29,21 @@ public struct Token {
 }
 
 extension Token {
+
+    static func parseComment(_ str: Substring) -> (FPCoreToken, Int)? {
+        let comment = Regex {
+            ";"
+            OneOrMore(.anyNonNewline)
+            One(.newlineSequence)
+        }
+        if let match: Regex<Substring>.Match = str.prefixMatch(of: comment) {
+            return (
+                FPCoreToken.comment(String(match.output)),
+                match.output.count
+            )
+        }
+        return nil
+    }
 
     static func parseSymbol(_ str: Substring) -> (FPCoreToken, Int)? {
         let r = #/[a-zA-Z~!@$%^&*_\-+=<>.?/:][a-zA-Z0-9~!@$%^&*_\-+=<>.?/:]*/#
@@ -100,8 +118,7 @@ extension Token {
     }
 
     static func parseWhiteSpace(_ str: Substring) -> (FPCoreToken, Int)? {
-        if let match: Regex<Substring>.Match = str.prefixMatch(of: .whitespace)
-        {
+        if let match: Regex<Substring>.Match = str.prefixMatch(of: .whitespace) {
             return (
                 FPCoreToken.whiteSpace(String(match.output)), match.output.count
             )

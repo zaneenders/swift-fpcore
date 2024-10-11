@@ -10,10 +10,11 @@ public struct FPCore: Sendable {
 
     public init(_ fpCore: String) throws {
         let tokens = try tokens(fpCore)
-        guard let fp = parse(tokens) else {
+        let fp = parse(tokens)
+        guard fp.count > 0 else {
             throw ParserError.parsingFailed
         }
-        self = fp
+        self = fp.first!
     }
 }
 

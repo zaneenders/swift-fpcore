@@ -1,8 +1,53 @@
+import RegexBuilder
 import XCTest
 
 @testable import FPCore
 
 final class FPCoreParserTests: XCTestCase {
+
+    func testFile() throws {
+        let file = """
+            ; -*- mode: scheme -*-
+
+            (FPCore (x)
+            :name "Cancel like terms"
+            (- (+ 1 x) x))
+
+            (FPCore (x)
+            :name "Expanding a square"
+            (- (* (+ x 1) (+ x 1)) 1))
+
+            (FPCore (x y z)
+            :name "Commute and associate"
+            (- (+ (+ x y) z) (+ x (+ y z))))
+            """
+        let tokens = try tokens(file)
+        let fpcores = parse(tokens)
+        let b = """
+            (FPCore (x)
+            :name "Cancel like terms"
+            (- (+ 1 x) x))
+            """
+        assertDirtyEqualFPCOre(fpcores.first!.description, b)
+        XCTAssertEqual(fpcores.count, 3)
+    }
+
+    func assertDirtyEqualFPCOre(_ left: String, _ right: String) {
+        let a = left.replacing(with: "", maxReplacements: Int.max) {
+            Regex {
+                ZeroOrMore(.whitespace)
+                ZeroOrMore(.newlineSequence)
+            }
+        }
+        let b = right.replacing(with: "", maxReplacements: Int.max) {
+            Regex {
+                OneOrMore(.whitespace)
+                ZeroOrMore(.newlineSequence)
+            }
+        }
+        XCTAssertEqual(a, b)
+    }
+
     func testBasic() throws {
         let fpCore: String = """
             (FPCore (x y z)

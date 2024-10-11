@@ -34,6 +34,9 @@ public func tokens(_ string: String) throws -> [Token] {
         } else if let (t, i) = Token.parseSymbol(s) {
             tokens.append(Token(index, t))
             index += i
+        } else if let (t, i) = Token.parseComment(s) {
+            tokens.append(Token(index, t))
+            index += i
         } else {
             throw
                 LexingError
